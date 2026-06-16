@@ -1,5 +1,7 @@
 # Triumvirate AutoLogin + Character Move Login UI
 
+**Disclaimer:** This saves account passwords in plain text inside your WoW `WTF` configuration files. Do not share your `WTF` folder, `Config.wtf`, crash logs, screenshots, or support files without checking them first. If you post these publicly, you may accidentally expose your account password.
+
 A custom no-MPQ login UI for the Triumvirate WoW 3.3.5a client. Adds a Triumvirate logo, Classic background, saved account selection, visual character reordering with Move Up/Down controls, Triumvirate links, Discord button. Externalised GlueXML files install directly into Interface with no Data patch files.
 
 Custom login-screen package for the Triumvirate WoW 3.3.5a client.

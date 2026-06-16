@@ -1,6 +1,6 @@
 # Triumvirate AutoLogin + Character Move Login UI
 
-A custom no-MPQ login UI for the Triumvirate WoW 3.3.5a client. Adds a Triumvirate logo, Classic background, saved account selection, visual character reordering with Move Up/Down controls, Triumvirate links, Discord button, and small “Made by Scuz” credit. Externalised GlueXML files install directly into Interface with no Data patch files.
+A custom no-MPQ login UI for the Triumvirate WoW 3.3.5a client. Adds a Triumvirate logo, Classic background, saved account selection, visual character reordering with Move Up/Down controls, Triumvirate links, Discord button. Externalised GlueXML files install directly into Interface with no Data patch files.
 
 Custom login-screen package for the Triumvirate WoW 3.3.5a client.
 
@@ -113,13 +113,9 @@ Check that no old experimental character-order marker is still inside `WTF/Confi
 You can also remove any old manual line like:
 
 ```text
-SET CharacterOrder "Scuz,Altname,Otheralt"
+SET CharacterOrder "Bob,Altname,Otheralt"
 ```
-
-This build does not need that line.
 
 ## Notes
 
 This package modifies the WoW GlueXML login UI. It is intended for a Wrath 3.3.5a Triumvirate client setup.
-
-Made by Scuz.

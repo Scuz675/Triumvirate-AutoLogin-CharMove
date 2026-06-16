@@ -217,27 +217,46 @@ end
 
 
 function Autologin_SelectAccount(idx)
-  local i = Autologin_CurrentPage * Autologin_PageSize + idx
-  local row = Autologin_Table[i]
+  idx = tonumber(idx);
+  if not idx then return end
+
+  -- Button IDs are page-local (1-4), but Autologin_SelectedIdx must be absolute.
+  local absoluteIdx = idx;
+  if idx <= Autologin_PageSize then
+    absoluteIdx = Autologin_CurrentPage * Autologin_PageSize + idx;
+  end
+
+  local row = Autologin_Table[absoluteIdx];
   if not row then return end
 
-  AccountLoginAccountEdit:SetText(row.name)
+  -- Critical fix: update the selected row immediately.
+  -- Without this, the yellow highlight and Remove Account can stay on the last saved account.
+  Autologin_SelectedIdx = absoluteIdx;
 
-  local token = row.password
-  local pwd = token
-  if type(token)=="string" and token:sub(1,3)=="!e:" then
-    pwd = _EAL_DecodePassword(token, row.name) -- salt = account name
+  AccountLoginAccountEdit:SetText(row.name);
+
+  local token = row.password;
+  local pwd = token;
+  if type(token) == "string" and token:sub(1,3) == "!e:" then
+    pwd = _EAL_DecodePassword(token, row.name); -- salt = account name
   end
   if AccountLoginPasswordEdit and pwd then
-    AccountLoginPasswordEdit:SetText(pwd)
+    AccountLoginPasswordEdit:SetText(pwd);
   end
+
+  -- Re-assert after SetText in case editbox scripts run while selecting.
+  Autologin_SelectedIdx = absoluteIdx;
+  Autologin_UpdateUI();
 end
 
 
 function Autologin_OnNameUpdate(name)
   Autologin_SelectedIdx = nil;
   for i = 1, table.getn(Autologin_Table) do
-    if (Autologin_Table[i].name == name) then Autologin_SelectedIdx = i; end
+    if (Autologin_Table[i].name == name) then
+      Autologin_SelectedIdx = i;
+      break;
+    end
   end
   if (Autologin_SelectedIdx) then
     Autologin_CurrentPage = math.floor((Autologin_SelectedIdx - 1) /
@@ -279,6 +298,22 @@ function Autologin_UpdateUI()
   else
     getglobal("AutologinSizeWarning"):Hide();
   end
+
+  if AutologinRemoveAccountButton then
+    if Autologin_SelectedIdx and Autologin_Table[Autologin_SelectedIdx] then
+      AutologinRemoveAccountButton:Enable();
+    else
+      AutologinRemoveAccountButton:Disable();
+    end
+  end
+
+  if AutologinClearCharacterButton then
+    if Autologin_SelectedIdx and Autologin_Table[Autologin_SelectedIdx] then
+      AutologinClearCharacterButton:Enable();
+    else
+      AutologinClearCharacterButton:Disable();
+    end
+  end
 end
 
 function Autologin_OnLogin()
@@ -302,11 +337,18 @@ end
 
 function Autologin_RemoveAccount()
   if (not Autologin_SelectedIdx) then return end
+  if (not Autologin_Table[Autologin_SelectedIdx]) then
+    Autologin_SelectedIdx = nil;
+    Autologin_UpdateUI();
+    return;
+  end
 
   table.remove(Autologin_Table, Autologin_SelectedIdx);
   Autologin_Save();
   AccountLoginAccountEdit:SetText("");
   AccountLoginPasswordEdit:SetText("");
+
+  Autologin_SelectedIdx = nil;
 
   if (Autologin_CurrentPage > 0 and Autologin_CurrentPage * Autologin_PageSize >
       table.getn(Autologin_Table) - 1) then
